@@ -4,6 +4,8 @@ gem 'rails', '4.2.3'
 gem 'puma'
 gem 'sass-rails', '~> 4.0.3'
 gem 'uglifier', '>= 1.3.0'
+gem 'jquery-rails'
+gem 'turbolinks'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
