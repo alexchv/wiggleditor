@@ -140,6 +140,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   jquery-rails
+  nokogiri
   pg
   puma
   rails (= 4.2.3)
