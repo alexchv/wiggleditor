@@ -12,8 +12,7 @@ class ProxyController < ApplicationController
     stylesheets = nokogiri_doc.search('link[rel="stylesheet"]')
 
     stylesheets.each do |stylesheet|
-      stylesheet_path = URI.parse(stylesheet['href'])
-      next if stylesheet_path.host.present?
+      next if validate_uri(stylesheet['href'])
       stylesheet['href'] = [params[:url], stylesheet['href']].join
     end
 
@@ -21,16 +20,33 @@ class ProxyController < ApplicationController
     images = nokogiri_doc.search('img')
 
     images.each do |image|
-      image_path = URI.parse(image['src'])
-      next if image_path.host.present?
-      image['src'] = [params[:url], image['src']].join
+      next if validate_uri(image['src'])
+      image['src'] = [params[:url].gsub('https', 'http'), image['src']].join
     end
 
+    # fix style background
+    background_images = nokogiri_doc.search('[style]')
+    ulr_regexp = /url\((.+)\)/
+    background_images.each{ |n|
+      if n['style'][ulr_regexp, 1]
+        n['style'] = n['style'].gsub(n['style'][ulr_regexp, 1], params[:url].gsub('https', 'http') + n['style'][ulr_regexp, 1]) unless validate_uri(n['style'][ulr_regexp, 1])
+      end
+    }
+
     # remove js scripts
-    scripts = nokogiri_doc.search('script')
-    scripts.each { |script| script.remove }
+    # scripts = nokogiri_doc.search('script')
+    # scripts.each { |script| script.remove }
 
     render :inline => nokogiri_doc.to_html
+  end
+
+  private
+
+  def validate_uri(path)
+    URI.parse(path).host.present?
+  rescue => e
+    puts e.message
+    true
   end
 
 end
