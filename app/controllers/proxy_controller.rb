@@ -37,6 +37,11 @@ class ProxyController < ApplicationController
     # scripts = nokogiri_doc.search('script')
     # scripts.each { |script| script.remove }
 
+    # add element mouseover script
+    mouseover_js = Nokogiri::XML::Node.new('script', nokogiri_doc)
+    mouseover_js['src'] = 'http://localhost:3000/mo_highlight.js'
+    nokogiri_doc.search('body').first.add_next_sibling(mouseover_js)
+
     render :inline => nokogiri_doc.to_html
   end
 
