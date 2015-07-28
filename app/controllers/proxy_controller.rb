@@ -1,16 +1,13 @@
 class ProxyController < ApplicationController
+  require 'open-uri'
 
   def highlighter
-    require 'open-uri'
-    file = open(params[:url], 'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36')
+    @user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36'
 
-    html_content = file.read
-
-    nokogiri_doc = Nokogiri::HTML(html_content)
+    nokogiri_doc = Nokogiri::HTML(get_webpage_content.read)
 
     # fix relative css paths
     stylesheets = nokogiri_doc.search('link[rel="stylesheet"]')
-
     stylesheets.each do |stylesheet|
       next if validate_uri(stylesheet['href'])
       stylesheet['href'] = [params[:url], stylesheet['href']].join
@@ -18,7 +15,6 @@ class ProxyController < ApplicationController
 
     # fix relative images paths
     images = nokogiri_doc.search('img')
-
     images.each do |image|
       next if validate_uri(image['src'])
       image['src'] = [params[:url].gsub('https', 'http'), image['src']].join
@@ -47,11 +43,24 @@ class ProxyController < ApplicationController
 
   private
 
-  def validate_uri(path)
-    URI.parse(path).host.present?
-  rescue => e
-    puts e.message
-    true
-  end
+    def get_webpage_content
+      open(params[:url], 'User-Agent' => @user_agent)
+    rescue => e
+      if e.message.include?('redirection forbidden')
+        if params[:url].include?('https')
+          params[:url].gsub!('https', 'http')
+        else
+          params[:url].gsub!('http', 'https')
+        end
+        return open(params[:url], 'User-Agent' => @user_agent)
+      end
+    end
+  
+    def validate_uri(path)
+      URI.parse(path).host.present?
+    rescue => e
+      puts e.message
+      true
+    end
 
 end
