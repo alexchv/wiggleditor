@@ -6,11 +6,25 @@ class ProxyController < ApplicationController
 
     nokogiri_doc = Nokogiri::HTML(get_webpage_content.read)
 
+    # fix js
+    scripts = nokogiri_doc.search('script')
+    scripts.each do |script|
+      next if validate_uri(script['src'])
+      script['src'] = [params[:url], script['src']].join
+    end
+
     # fix relative css paths
     stylesheets = nokogiri_doc.search('link[rel="stylesheet"]')
     stylesheets.each do |stylesheet|
       next if validate_uri(stylesheet['href'])
       stylesheet['href'] = [params[:url], stylesheet['href']].join
+    end
+
+    # fix import html path
+    stylesheets = nokogiri_doc.search('link[rel="import"]')
+    stylesheets.each do |import|
+      next if validate_uri(import['href'])
+      import['href'] = [params[:url], import['href']].join
     end
 
     # fix relative images paths
@@ -55,7 +69,7 @@ class ProxyController < ApplicationController
         return open(params[:url], 'User-Agent' => @user_agent)
       end
     end
-  
+
     def validate_uri(path)
       URI.parse(path).host.present?
     rescue => e
