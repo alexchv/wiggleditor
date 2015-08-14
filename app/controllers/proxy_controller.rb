@@ -20,6 +20,13 @@ class ProxyController < ApplicationController
       stylesheet['href'] = [params[:url], stylesheet['href']].join
     end
 
+    # add polymer js
+    # <link rel="import" href="components/polymer/polymer.html">
+    polymer_js = Nokogiri::XML::Node.new('link', nokogiri_doc)
+    polymer_js['rel'] = 'import'
+    polymer_js['href'] = "http://wiggle-beta.herokuapp.com/proxy?url=#{[params[:url], 'components/polymer/polymer.html'].join}"
+    nokogiri_doc.search('head').first.add_next_sibling(polymer_js)
+
     # fix import html path
     stylesheets = nokogiri_doc.search('link[rel="import"]')
     stylesheets.each do |import|
