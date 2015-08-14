@@ -30,7 +30,7 @@
         <entry file="file://$PROJECT_DIR$/app/controllers/proxy_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.30371353" vertical-offset="161" max-vertical-offset="1395">
-              <caret line="26" column="88" selection-start-line="26" selection-start-column="88" selection-end-line="26" selection-end-column="88" />
+              <caret line="26" column="94" selection-start-line="26" selection-start-column="94" selection-end-line="26" selection-end-column="94" />
               <folding />
             </state>
           </provider>
@@ -643,7 +643,7 @@
     <entry file="file://$PROJECT_DIR$/app/controllers/proxy_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.30371353" vertical-offset="161" max-vertical-offset="1395">
-          <caret line="26" column="88" selection-start-line="26" selection-start-column="88" selection-end-line="26" selection-end-column="88" />
+          <caret line="26" column="94" selection-start-line="26" selection-start-column="94" selection-end-line="26" selection-end-column="94" />
           <folding />
         </state>
       </provider>
