@@ -24,7 +24,8 @@ class ProxyController < ApplicationController
     stylesheets = nokogiri_doc.search('link[rel="import"]')
     stylesheets.each do |import|
       next if validate_uri(import['href'])
-      import['href'] = [params[:url], import['href']].join
+      # import['href'] = [params[:url], import['href']].join
+      import['href'] = "http://wiggle-beta.herokuapp.com/proxy?url=#{[params[:url], import['href']].join}"
     end
 
     # fix relative images paths
