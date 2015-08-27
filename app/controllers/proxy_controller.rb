@@ -17,15 +17,16 @@ class ProxyController < ApplicationController
     stylesheets = nokogiri_doc.search('link[rel="stylesheet"]')
     stylesheets.each do |stylesheet|
       next if validate_uri(stylesheet['href'])
-      stylesheet['href'] = [params[:url], stylesheet['href']].join
+      stylesheet['href'] = [params[:url], '/', stylesheet['href']].join
     end
 
-    # add polymer js
+    # add polymer js -------
     # <link rel="import" href="components/polymer/polymer.html">
-    polymer_js = Nokogiri::XML::Node.new('link', nokogiri_doc)
-    polymer_js['rel'] = 'import'
-    polymer_js['href'] = "http://wiggle-beta.herokuapp.com/proxy?url=#{[params[:url], '/bower_components/polymer/polymer.html'].join}"
-    nokogiri_doc.search('head').first.add_next_sibling(polymer_js)
+    # bower_components/polymer
+    # polymer_js = Nokogiri::XML::Node.new('link', nokogiri_doc)
+    # polymer_js['rel'] = 'import'
+    # polymer_js['href'] = "http://wiggle-beta.herokuapp.com/proxy?url=#{[params[:url], '/bower_components/polymer/polymer.html'].join}"
+    # nokogiri_doc.search('head').first.add_next_sibling(polymer_js)
 
     # fix import html path
     stylesheets = nokogiri_doc.search('link[rel="import"]')
@@ -34,6 +35,7 @@ class ProxyController < ApplicationController
       # import['href'] = [params[:url], import['href']].join
       import['href'] = "http://wiggle-beta.herokuapp.com/proxy?url=#{[params[:url], import['href']].join}"
     end
+    # ------------
 
     # fix relative images paths
     images = nokogiri_doc.search('img')
